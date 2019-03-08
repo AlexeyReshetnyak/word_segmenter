@@ -161,13 +161,12 @@ int main()
 
   words.segment();
   words.show_result();
-  //words.show_debug();
 
   words.fill_black_boxes();
 
   segmentation columns(words.black_boxes_img, input_image);
 
-  columns.kernel_size = Size(25, 25);
+  columns.kernel_size = Size(27, 27);
   columns.sig_x = 70;
   columns.sig_y = 70;
   columns.thresh = 240;
@@ -177,13 +176,13 @@ int main()
   columns.thresh_type = THRESH_BINARY;
   columns.border_type = BORDER_CONSTANT;
   columns.process_edges = true;
-  columns.border_size = 11;
+  columns.border_size = 9;
   columns.area_threshold = true;
   columns.area_threshold_val = 0.01;
 
   columns.segment();
   columns.show_result();
-  //columns.show_debug();
+
   return 0;
 }
 
