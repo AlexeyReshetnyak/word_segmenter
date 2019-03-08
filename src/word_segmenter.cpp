@@ -144,10 +144,13 @@ void segmentation::show_debug()
   waitKey(0);
 }
 
-int main()
+int main(int argc, const char** argv)
 {
-  string file_name = "../images/006_ND_1947-01-08_006.tif";
-  Mat input_image = imread(file_name);
+  cv::CommandLineParser parser(argc, argv,
+      "{input_file_name|input_file_name|}"
+      );
+  std::string input_file_name = parser.get<std::string>("input_file_name");
+  Mat input_image = imread(input_file_name);
   segmentation words(input_image);
 
   words.kernel_size = Size(27, 27);
