@@ -10,7 +10,6 @@ static void fill_edges(const Mat &src, Mat &dst, int32_t val, int32_t edge_size)
                  border_type, value);
 }
 
-
 segmenter::segmenter(const Mat &img)
 {
   gray_img.create(img.rows, img.cols, CV_8UC1);
@@ -21,13 +20,13 @@ segmenter::segmenter(const Mat &img)
   img.copyTo(in_img);
 }
 
-segmenter::segmenter(const Mat &img, const Mat &src_img)
+segmenter::segmenter(const Mat &processed_img, const Mat &src_img)
 {
-  gray_img.create(img.rows, img.cols, CV_8UC1);
-  binary_img.create(img.rows, img.cols, CV_8UC1);
-  img_with_edges.create(img.rows, img.cols, CV_8UC1);
-  filtered_img.create(img.rows, img.cols, CV_8UC1);
-  img.copyTo(in_img);
+  gray_img.create(src_img.rows, src_img.cols, CV_8UC1);
+  binary_img.create(src_img.rows, src_img.cols, CV_8UC1);
+  img_with_edges.create(src_img.rows, src_img.cols, CV_8UC1);
+  filtered_img.create(src_img.rows, src_img.cols, CV_8UC1);
+  processed_img.copyTo(in_img);
   src_img.copyTo(blocks_img);
 }
 
