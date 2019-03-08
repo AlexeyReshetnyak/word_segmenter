@@ -35,7 +35,7 @@ void segmenter::fill_black_boxes()
   gray_img.copyTo(black_boxes_img);
   for(int32_t i = 0; i < contours.size(); i++)
     rectangle(black_boxes_img, bound_rects[i].tl(), bound_rects[i].br(),
-        Scalar(0, 0, 255), -1);
+        Scalar(0, 0, 0), -1);
 }
 
 void segmenter::segment()
