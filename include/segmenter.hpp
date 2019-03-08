@@ -7,7 +7,7 @@
 using namespace cv;
 using namespace std;
 
-class segmentation
+class segmenter
 {
 public:
   Size kernel_size;
@@ -33,8 +33,8 @@ public:
   bool process_edges;
   bool area_threshold;
 
-  segmentation(const Mat &img);
-  segmentation(const Mat &img, const Mat &src_img);
+  segmenter(const Mat &img);
+  segmenter(const Mat &img, const Mat &src_img);
   void segment();
   void clear_vectors();
   void show_result();

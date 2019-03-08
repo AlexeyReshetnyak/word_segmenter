@@ -11,7 +11,7 @@ static void fill_edges(const Mat &src, Mat &dst, int32_t val, int32_t edge_size)
 }
 
 
-segmentation::segmentation(const Mat &img)
+segmenter::segmenter(const Mat &img)
 {
   gray_img.create(img.rows, img.cols, CV_8UC1);
   binary_img.create(img.rows, img.cols, CV_8UC1);
@@ -21,7 +21,7 @@ segmentation::segmentation(const Mat &img)
   img.copyTo(in_img);
 }
 
-segmentation::segmentation(const Mat &img, const Mat &src_img)
+segmenter::segmenter(const Mat &img, const Mat &src_img)
 {
   gray_img.create(img.rows, img.cols, CV_8UC1);
   binary_img.create(img.rows, img.cols, CV_8UC1);
@@ -31,7 +31,7 @@ segmentation::segmentation(const Mat &img, const Mat &src_img)
   src_img.copyTo(blocks_img);
 }
 
-void segmentation::fill_black_boxes()
+void segmenter::fill_black_boxes()
 {
   gray_img.copyTo(black_boxes_img);
   for(int32_t i = 0; i < contours.size(); i++)
@@ -39,7 +39,7 @@ void segmentation::fill_black_boxes()
         Scalar(0, 0, 255), -1);
 }
 
-void segmentation::clear_vectors()
+void segmenter::clear_vectors()
 {
   for (int32_t i = 0; i < contours.size(); i++)
     contours[i].clear();
@@ -48,7 +48,7 @@ void segmentation::clear_vectors()
   hierarchy.clear();
 }
 
-void segmentation::segment()
+void segmenter::segment()
 {
   if (in_img.channels() != 1)
     cvtColor(in_img, gray_img, COLOR_BGR2GRAY);
@@ -86,13 +86,13 @@ void segmentation::segment()
   }
 }
 
-void segmentation::show_result()
+void segmenter::show_result()
 {
   imshow("Blocks image", blocks_img);
   waitKey(0);
 }
 
-void segmentation::show_debug()
+void segmenter::show_debug()
 {
   imshow("Filtered image", filtered_img);
   imshow("Binary image", binary_img);
@@ -106,7 +106,7 @@ int main(int argc, const char** argv)
       );
   std::string input_file_name = parser.get<std::string>("input_file_name");
   Mat input_image = imread(input_file_name);
-  segmentation words(input_image);
+  segmenter words(input_image);
 
   words.kernel_size = Size(27, 27);
   words.thresh = 190;
@@ -122,7 +122,7 @@ int main(int argc, const char** argv)
 
   words.fill_black_boxes();
 
-  segmentation columns(words.black_boxes_img, input_image);
+  segmenter columns(words.black_boxes_img, input_image);
 
   columns.kernel_size = Size(27, 27);
   columns.sig_x = 70;

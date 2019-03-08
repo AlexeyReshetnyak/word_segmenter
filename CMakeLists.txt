@@ -8,6 +8,7 @@ else()
   message("OpenCV not found.")
 endif()
 
+include_directories(./include ${OpenCV_INCLUDE_DIRS})
 add_executable(segmenter ./src/segmenter.cpp)
 target_link_libraries(segmenter ${OpenCV_LIBS})
 
