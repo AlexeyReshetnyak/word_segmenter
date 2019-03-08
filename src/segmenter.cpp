@@ -33,9 +33,16 @@ segmenter::segmenter(const Mat &processed_img, const Mat &src_img)
 void segmenter::fill_black_boxes()
 {
   gray_img.copyTo(black_boxes_img);
-  for(int32_t i = 0; i < contours.size(); i++)
-    rectangle(black_boxes_img, bound_rects[i].tl(), bound_rects[i].br(),
-        Scalar(0, 0, 0), -1);
+  for(int32_t i = 0; i < contours.size(); i++) {
+    if (area_threshold) {
+      if (check_area(bound_rects[i]))
+        rectangle(black_boxes_img, bound_rects[i].tl(), bound_rects[i].br(),
+            Scalar(0, 0, 0), -1);
+    }
+    else
+      rectangle(black_boxes_img, bound_rects[i].tl(), bound_rects[i].br(),
+          Scalar(0, 0, 0), -1);
+    }
 }
 
 void segmenter::segment()
@@ -44,7 +51,8 @@ void segmenter::segment()
     cvtColor(in_img, gray_img, COLOR_BGR2GRAY);
   else
     in_img.copyTo(gray_img);
-  GaussianBlur(gray_img, filtered_img, kernel_size, 0, 0);
+  GaussianBlur(gray_img, filtered_img, kernel_size, sig_x, sig_y,
+               border_type);
   threshold(filtered_img, binary_img, thresh, max_val, thresh_type);
   if (process_edges) {
     fill_edges(binary_img, img_with_edges, max_val, border_size);
@@ -62,18 +70,29 @@ void segmenter::segment()
   }
 
   Scalar color(0, 0, 255);
-  float img_s = in_img.rows * in_img.cols;
 
-  const float max_thresh = 0.8;
   for(int32_t i = 0; i < contours.size(); i++) {
-    float rect_s = bound_rects[i].height * bound_rects[i].width;
     if (area_threshold) {
-      if (rect_s > area_threshold_val * img_s && rect_s < max_thresh * img_s)
-        rectangle(blocks_img, bound_rects[i].tl(), bound_rects[i].br(), color, 1);
+      if (check_area(bound_rects[i]))
+        rectangle(blocks_img, bound_rects[i].tl(), bound_rects[i].br(), color,
+                  1);
     }
     else
-      rectangle(blocks_img, bound_rects[i].tl(), bound_rects[i].br(), color, 1);
+      rectangle(blocks_img, bound_rects[i].tl(), bound_rects[i].br(), color,
+                1);
   }
+}
+
+bool segmenter::check_area(const Rect &rect)
+{
+  const float max_thresh = 0.8;
+  float img_s = in_img.rows * in_img.cols;
+  float rect_s = rect.height * rect.width;
+
+  if (rect_s > area_threshold_val * img_s && rect_s < max_thresh * img_s)
+    return true;
+
+  return false;
 }
 
 void segmenter::show_result()
@@ -84,8 +103,15 @@ void segmenter::show_result()
 
 void segmenter::show_debug()
 {
+  imshow("Input image", in_img);
+  waitKey(0);
+  imshow("Gray image", gray_img);
+  waitKey(0);
   imshow("Filtered image", filtered_img);
+  waitKey(0);
   imshow("Binary image", binary_img);
+  waitKey(0);
+  imshow("Image with edges", img_with_edges);
   waitKey(0);
 }
 
@@ -98,14 +124,19 @@ int main(int argc, const char** argv)
   Mat input_image = imread(input_file_name);
   segmenter words(input_image);
 
-  words.kernel_size = Size(27, 27);
+  words.kernel_size = Size(47, 47);
+  words.sig_x = 6;
+  words.sig_y = 6;
+  words.border_type = BORDER_CONSTANT;
   words.thresh = 190;
   words.max_val = 255;
-  words.bound_type = CV_RETR_EXTERNAL;
+  words.bound_type = CV_RETR_TREE;
   words.chain_type = CV_CHAIN_APPROX_SIMPLE;
-  words.thresh_type = THRESH_BINARY_INV;
-  words.process_edges = false;
-  words.area_threshold = false;
+  words.thresh_type = THRESH_BINARY;
+  words.process_edges = true;
+  words.area_threshold = true;
+  words.area_threshold_val = 0.0001;
+  words.border_size = 4;
 
   words.segment();
   words.show_result();
@@ -114,10 +145,10 @@ int main(int argc, const char** argv)
 
   segmenter columns(words.black_boxes_img, input_image);
 
-  columns.kernel_size = Size(27, 27);
-  columns.sig_x = 70;
-  columns.sig_y = 70;
-  columns.thresh = 240;
+  columns.kernel_size = Size(17, 17);
+  columns.sig_x = 12;
+  columns.sig_y = 12;
+  columns.thresh = 250;
   columns.max_val = 255;
   columns.bound_type = CV_RETR_TREE;
   columns.chain_type = CV_CHAIN_APPROX_TC89_KCOS;

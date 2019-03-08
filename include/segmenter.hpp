@@ -42,6 +42,8 @@ private:
   Mat img_with_edges;
   vector<vector<Point>> contours;
   vector<Vec4i> hierarchy;
+
+  bool check_area(const Rect &rect);
 };
 
 
