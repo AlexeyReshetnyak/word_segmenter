@@ -39,15 +39,6 @@ void segmenter::fill_black_boxes()
         Scalar(0, 0, 255), -1);
 }
 
-void segmenter::clear_vectors()
-{
-  for (int32_t i = 0; i < contours.size(); i++)
-    contours[i].clear();
-  contours.clear();
-  bound_rects.clear();
-  hierarchy.clear();
-}
-
 void segmenter::segment()
 {
   if (in_img.channels() != 1)

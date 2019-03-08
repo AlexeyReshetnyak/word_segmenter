@@ -36,7 +36,6 @@ public:
   segmenter(const Mat &img);
   segmenter(const Mat &img, const Mat &src_img);
   void segment();
-  void clear_vectors();
   void show_result();
   void show_debug();
   void fill_black_boxes();
