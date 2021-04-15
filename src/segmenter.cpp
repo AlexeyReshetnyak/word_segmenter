@@ -130,8 +130,8 @@ int main(int argc, const char** argv)
   words.border_type = BORDER_CONSTANT;
   words.thresh = 190;
   words.max_val = 255;
-  words.bound_type = CV_RETR_TREE;
-  words.chain_type = CV_CHAIN_APPROX_SIMPLE;
+  words.bound_type = RETR_TREE;
+  words.chain_type = CHAIN_APPROX_SIMPLE;
   words.thresh_type = THRESH_BINARY;
   words.process_edges = true;
   words.area_threshold = true;
@@ -142,6 +142,7 @@ int main(int argc, const char** argv)
   words.show_result();
 
   words.fill_black_boxes();
+  words.show_debug();
 
   segmenter columns(words.black_boxes_img, input_image);
 
@@ -150,8 +151,8 @@ int main(int argc, const char** argv)
   columns.sig_y = 12;
   columns.thresh = 250;
   columns.max_val = 255;
-  columns.bound_type = CV_RETR_TREE;
-  columns.chain_type = CV_CHAIN_APPROX_TC89_KCOS;
+  columns.bound_type = RETR_TREE;
+  columns.chain_type = CHAIN_APPROX_TC89_KCOS;
   columns.thresh_type = THRESH_BINARY;
   columns.border_type = BORDER_CONSTANT;
   columns.process_edges = true;
@@ -161,6 +162,7 @@ int main(int argc, const char** argv)
 
   columns.segment();
   columns.show_result();
+  columns.show_debug();
 
   return 0;
 }
